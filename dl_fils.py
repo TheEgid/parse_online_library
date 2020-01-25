@@ -33,7 +33,7 @@ def make_soup(url):
 def get_book_info(soup):
     elements = list()
     try:
-        tags = soup.findAll({'entry_content': True, 'h1': True, })
+        tags = soup.find_all({'entry_content': True, 'h1': True, })
         [elements.append(element.text) for element in tags]
         elements = [el.replace('\xa0', ' ') for el in elements][0]
         _elements = ''.join(elements)
