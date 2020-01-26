@@ -2,32 +2,8 @@ import requests
 import os
 import logging
 from pathvalidate import sanitize_filename
-from bs4 import BeautifulSoup
-from PIL import Image
 
-
-def get_path(file):
-    module_dir = os.path.dirname(__file__)
-    return os.path.join(module_dir, file)
-
-
-def convert_to_jpg(file):
-    file = get_path(file)
-    file_name, file_extension = os.path.splitext(file)
-    if file_extension.lower() != 'jpg':
-        logging.info(f' Process with {file_name}{file_extension}')
-        im = Image.open(file)
-        rgb_im = im.convert('RGB')
-        file = f'{file_name}.jpg'
-        rgb_im.save(file)
-    return file
-
-
-def make_soup(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'lxml')
-    return soup
+from utils import get_path, convert_to_jpg, make_soup, make_imageresize
 
 
 def get_book_info(soup):
@@ -62,9 +38,10 @@ def download_img(url, filename, folder='images/'):
     try:
         with open(filepath, 'wb') as f:
             f.write(response.content)
-        file_path = convert_to_jpg(filename)
+        file_path = convert_to_jpg(filepath)
+        make_imageresize(file_path)
         logging.info(f'{url} downloaded & saved as {file_path}')
-    except IOError as err:
+    except IOError:
         pass
 
 
@@ -88,10 +65,12 @@ def main():
     start_page = 0
     end_page = 11
 
+    root_link = f"http://tululu.org/"
+
     for id in range(start_page, end_page, 1):
         info_link = f"http://tululu.org/b{id}/"
         txt_link = f"http://tululu.org/txt.php?id={id}/"
-        root_link = f"http://tululu.org/"
+
         soup = make_soup(info_link)
         book_info = get_book_info(soup)
         if book_info:
