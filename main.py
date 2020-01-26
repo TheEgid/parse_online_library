@@ -46,6 +46,9 @@ def download_img(url, filename, folder='images/'):
     sanitize_filename(filename)
     response = requests.get(url)
     response.raise_for_status()
+    if 'image' not in response.headers['Content-Type']:
+        logging.info(f'{url} image passed')
+        return
     os.makedirs(folder, exist_ok=True)
     filepath = os.path.join(folder, filename)
     try:
@@ -63,13 +66,13 @@ def download_txt(url, filename, folder='books/'):
     sanitize_filename(filename)
     response = requests.get(url)
     response.raise_for_status()
-    if "<!DOCTYPE html" in str(response.content):
-        logging.info(f'{url} is HTML: passed')
+    if 'text/plain' not in response.headers['Content-Type']:
+        logging.info(f'{url} txt passed')
         return
     os.makedirs(folder, exist_ok=True)
     filepath = os.path.join(folder, filename)
-    with open(filepath, 'wb') as f:
-        f.write(response.content)
+    with open(filepath, 'w', encoding="utf-8") as f:
+        f.write(response.content.decode("utf-8"))
         logging.info(f'{url} downloaded & saved as {filepath}')
 
 
