@@ -3,12 +3,7 @@ from bs4 import BeautifulSoup
 import lxml
 from urllib.parse import urljoin
 
-
-def make_soup(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'lxml')
-    return soup
+from utils import make_soup
 
 
 def get_book_href(href_block, domain):
@@ -32,9 +27,13 @@ def get_category_hrefs(soup, domain):
 
 
 domain = r"http://tululu.org/"
-g_link = f"{domain}/l55/"
 
-category_hrefs = get_category_hrefs(make_soup(g_link), domain)
+category_hrefs = list()
+
+for page in range(1, 5):
+    print(page)
+    page_category_link = f"{domain}/l55/{page}"
+    category_hrefs.extend(get_category_hrefs(make_soup(page_category_link), domain))
 
 print(category_hrefs)
 print(len(category_hrefs))
