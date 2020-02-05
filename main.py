@@ -35,12 +35,11 @@ def get_book_comments(soup, book_title):
         return
 
 
-def get_book_genres(soup, book_title):
+def get_book_genres(soup):
     genres = []
     try:
-        raw_genres = soup.find('span', class_='d_book').find_all('a')
-        [genres.append(r.text) for r in raw_genres]
-        return {book_title: genres}
+        [genres.append(genre.text) for genre in soup.select('span.d_book > a')]
+        return genres
     except (TypeError, AttributeError):
         return
 
