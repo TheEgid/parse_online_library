@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from PIL import Image
+import lxml
 import requests
 import os
 import logging
