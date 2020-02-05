@@ -15,11 +15,11 @@ def get_book_title(soup):
     except ValueError:
         return
 
-
+    
 def get_book_image(soup):
     try:
-        div = soup.find('div', class_='bookimage')
-        return div.find('img')['src']
+        tags = 'div.bookimage > a > img'
+        return soup.select_one(tags).get('src')
     except ValueError:
         return
 
