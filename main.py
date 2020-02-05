@@ -18,19 +18,19 @@ def get_book_title(soup):
     
 def get_book_image(soup):
     try:
-        tags = 'div.bookimage > a > img'
-        return soup.select_one(tags).get('src')
+        return soup.select_one('div.bookimage > a > img').get('src')
     except ValueError:
         return
 
 
-def get_book_comments(soup, book_title):
+def get_book_comments(soup):
     comments = []
     try:
-        raw_comments = soup.find_all('div', class_='texts')
-        for comment in raw_comments:
-            comments.extend([x.text for x in comment.find_all('span')])
-        return {book_title: '\n'.join(comments)}
+        raw_comments = soup.select('div#content > div.texts')
+        for raw_comment in raw_comments:
+           comment = raw_comment.select_one("span.black").text.strip()
+           comments.append(comment)
+        return comments
     except TypeError:
         return
 
