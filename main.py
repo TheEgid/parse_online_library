@@ -9,11 +9,8 @@ from utils import get_path, convert_to_jpg, make_soup, make_imageresize
 def get_book_title(soup):
     elements = list()
     try:
-        tags = soup.find_all({'entry_content': True, 'h1': True, })
-        [elements.append(element.text) for element in tags]
-        elements = [el.replace('\xa0', ' ') for el in elements][0]
-        _elements = ''.join(elements)
-        book_title, _ = _elements.split('::')
+        h1 = soup.select_one('div#content > h1').text
+        book_title, _ = h1.split('::')
         return book_title.strip().replace('. ', '_').replace(': ', '_')
     except ValueError:
         return
