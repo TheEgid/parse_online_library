@@ -7,31 +7,30 @@ from utils import get_path, convert_to_jpg, make_soup, make_imageresize
 
 
 def get_book_title(soup):
-    elements = list()
     try:
-        h1 = soup.select_one('div#content > h1').text
+        h1 = soup.select_one('#content > h1').text
         book_title, _ = h1.split('::')
         return book_title.strip().replace('. ', '_').replace(': ', '_')
-    except ValueError:
+    except (ValueError, AttributeError):
         return
 
     
 def get_book_image(soup):
     try:
-        return soup.select_one('div.bookimage > a > img').get('src')
-    except ValueError:
+        return soup.select_one('.bookimage > a > img').get('src')
+    except (ValueError, AttributeError):
         return
 
 
 def get_book_comments(soup):
     comments = []
     try:
-        raw_comments = soup.select('div#content > div.texts')
+        raw_comments = soup.select('#content > div.texts')
         for raw_comment in raw_comments:
            comment = raw_comment.select_one("span.black").text.strip()
            comments.append(comment)
         return comments
-    except TypeError:
+    except (ValueError, AttributeError):
         return
 
 
@@ -83,25 +82,27 @@ def main():
     domain = r"http://tululu.org/"
     logging.basicConfig(level=logging.INFO)
     start_page = 0
-    end_page = 11
+    end_page = 4
 
     for id in range(start_page, end_page):
         info_link = urljoin(domain, f"b{id}")
-        txt_link = urljoin(domain, f"txt.php?id={id}")
+        #txt_link = urljoin(domain, f"txt.php?id={id}")
         soup = make_soup(info_link)
 
         book_title = get_book_title(soup)
 
+        print(book_title)
+
         if book_title:
-            download_txt(txt_link, book_title)
-            book_img = get_book_image(soup)
+            # download_txt(txt_link, book_title)
+            # book_img = get_book_image(soup)
+            #
+            # download_img(urljoin(domain, book_img), book_title)
 
-            download_img(urljoin(domain, book_img), book_title)
-
-            book_comments = get_book_comments(soup, book_title)
+            book_comments = get_book_comments(soup)
             print(book_comments)
 
-            book_genres = get_book_genres(soup, book_title)
+            book_genres = get_book_genres(soup)
             print(book_genres)
 
 
