@@ -4,6 +4,7 @@ import logging
 from pathvalidate import sanitize_filename
 from urllib.parse import urljoin
 from utils import get_path, convert_to_jpg, make_soup, make_imageresize
+from parse_tululu_category import fetch_hrefs
 
 
 def get_book_title(soup):
@@ -14,6 +15,14 @@ def get_book_title(soup):
     except (ValueError, AttributeError):
         return
 
+
+def get_book_author(soup):
+    try:
+        h1 = soup.select_one('#content > h1').text
+        _, book_author = h1.split('::')
+        return book_author.strip()
+    except (ValueError, AttributeError):
+        return
     
 def get_book_image(soup):
     try:
@@ -79,29 +88,29 @@ def download_txt(url, filename, folder='books/'):
 
 
 def main():
-    domain = r"http://tululu.org/"
     logging.basicConfig(level=logging.INFO)
-    start_page = 0
-    end_page = 4
+    domain = r"http://tululu.org/"
+    category = 'l55'
+    category_hrefs = fetch_hrefs(domain, category, amount=100)
 
-    for id in range(start_page, end_page):
-        info_link = urljoin(domain, f"b{id}")
-        #txt_link = urljoin(domain, f"txt.php?id={id}")
-        soup = make_soup(info_link)
-
+    for href in category_hrefs:
+        soup = make_soup(href)
+        book_author = get_book_author(soup)
+        print(book_author)
         book_title = get_book_title(soup)
-
         print(book_title)
 
         if book_title:
-            # download_txt(txt_link, book_title)
-            # book_img = get_book_image(soup)
-            #
-            # download_img(urljoin(domain, book_img), book_title)
-
+            txt_id = ''.join(
+                char for char in 'http://tululu.org/b550/' if char.isdigit())
+            txt_link = urljoin(domain, f"txt.php?id={txt_id}")
+            #download_txt(txt_link, book_title)
+            print(txt_link)
+            book_img = get_book_image(soup)
+            print(book_img)
+            #download_img(urljoin(domain, book_img), book_title)
             book_comments = get_book_comments(soup)
             print(book_comments)
-
             book_genres = get_book_genres(soup)
             print(book_genres)
 

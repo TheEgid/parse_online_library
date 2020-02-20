@@ -1,6 +1,3 @@
-import requests
-from bs4 import BeautifulSoup
-import lxml
 from urllib.parse import urljoin
 import logging
 from utils import make_soup
@@ -14,8 +11,9 @@ def get_book_href(href_block, domain):
     except (TypeError, AttributeError):
         return
 
+
 def get_category_hrefs(soup, domain):
-    category_hrefs = list()
+    category_hrefs = []
     try:
         href_blocks = soup.select('table.d_book')
         for href_block in href_blocks:
@@ -25,16 +23,16 @@ def get_category_hrefs(soup, domain):
         return
 
 
-logging.basicConfig(level=logging.INFO)
-domain = r"http://tululu.org/"
+def fetch_hrefs(domain, category, amount):
+    category_hrefs = []
+    for page in range(0, amount):
+        logging.info(f'process with page № {page}')
+        page_category_link = f"{domain}/{category}/{page}"
+        category_hrefs.extend(
+            get_category_hrefs(make_soup(page_category_link), domain))
+        if len(set(category_hrefs)) == amount:
+            break
+    return category_hrefs
 
-category_hrefs = list()
-
-for page in range(1, 11):
-    logging.info(f'process with page № {page}')
-    page_category_link = f"{domain}/l55/{page}"
-    category_hrefs.extend(get_category_hrefs(make_soup(page_category_link), domain))
 
 
-print(category_hrefs)
-print(len(category_hrefs))
