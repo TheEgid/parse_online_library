@@ -1,63 +1,68 @@
-from bs4 import BeautifulSoup
-from PIL import Image
-import lxml
-import requests
-import os
-import logging
-from resizeimage import resizeimage
+from urllib.parse import urljoin
 
 
-def get_file_extension(url):
-    return '.' + url.split('.')[-1]
+def get_book_title(soup):
+    try:
+        h1 = soup.select_one('#content > h1').text
+        book_title, _ = h1.split('::')
+        return book_title.strip().replace('. ', '_').replace(': ', '_')
+    except (ValueError, AttributeError):
+        return
 
 
-def get_path(file):
-    module_dir = os.path.dirname(__file__)
-    return os.path.join(module_dir, file)
+def get_book_author(soup):
+    try:
+        h1 = soup.select_one('#content > h1').text
+        _, book_author = h1.split('::')
+        return book_author.strip()
+    except (ValueError, AttributeError):
+        return
 
 
-def convert_to_jpg(file):
-    file = get_path(file)
-    file_name, file_extension = os.path.splitext(file)
-    if file_extension.lower() != 'jpg':
-        logging.info(f' Process with {file_name}{file_extension}')
-        im = Image.open(file)
-        rgb_im = im.convert('RGB')
-        file = f'{file_name}.jpg'
-        rgb_im.save(file)
-    return file
+def get_book_img_src(soup):
+    try:
+        return soup.select_one('.bookimage > a > img').get('src')
+    except (ValueError, AttributeError):
+        return
 
 
-def make_imageresize(file_path, extension='.jpg'):
-    gorizontal = [285, 200]
-    vertical = [200, 285]
-    quadrate = [gorizontal[0], gorizontal[0]]
-    if get_file_extension(file_path) == extension:
-
-        fd_img = open(file_path, 'rb')
-        img = Image.open(fd_img)
-
-        try:
-            if img.width > img.height:
-                img = resizeimage.resize_contain(img, gorizontal)
-            elif img.width == img.height:
-                img = resizeimage.resize_contain(img, quadrate)
-            else:
-                img = resizeimage.resize_contain(img, vertical)
-        except resizeimage.ImageSizeError:
-            logging.info('ImageSizeError' + img)
-
-        if img.mode in ("RGBA", "P"):
-            img = img.convert("RGB")
-        img.save(file_path, img.format)
-
-        fd_img.close()
-    else:
-        pass
+def get_book_comments(soup):
+    comments = []
+    try:
+        raw_comments = soup.select('#content > div.texts')
+        for raw_comment in raw_comments:
+            comment = raw_comment.select_one("span.black").text.strip()
+            comments.append(comment)
+        return comments
+    except (ValueError, AttributeError):
+        return
 
 
-def make_soup(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'lxml')
-    return soup
+def get_book_genres(soup):
+    genres = []
+    try:
+        [genres.append(genre.text) for genre in soup.select('span.d_book > a')]
+        return genres
+    except (TypeError, AttributeError):
+        return
+
+
+def get_book_href(href_block, domain):
+    try:
+        href = href_block.select_one('a').get('href')
+        book_href = urljoin(domain, href)
+        return book_href
+    except (TypeError, AttributeError):
+        return
+
+
+def get_category_hrefs(soup, domain):
+    category_hrefs = []
+    try:
+        href_blocks = soup.select('table.d_book')
+        for href_block in href_blocks:
+            category_hrefs.append(get_book_href(href_block, domain))
+        return category_hrefs
+    except (TypeError, AttributeError):
+        return
+
