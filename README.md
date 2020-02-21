@@ -9,7 +9,6 @@ Python 3.8 должен быть уже установлен.
 Затем используйте `pip` для установки зависимостей:
 ```
 pip install -r requirements.txt
-
 ```
 
 ### Использование
@@ -19,7 +18,6 @@ pip install -r requirements.txt
 
 ```
 python parse_tululu_category.py
-
 ```
 
 Можно также запускать с аргументами, кроме текста сообщения аргументы имеют параметры по умолчанию.
@@ -32,23 +30,20 @@ optional arguments:
   -start_page START_PAGE, --start_page START_PAGE
                         First lib page for parsing (default: 1)
   -end_page END_PAGE, --end_page END_PAGE
-                        Last lib page for parsing (default: 1)```
-
-```
+                        Last lib page for parsing (default: 1)
 ```
 
+
+```
 python parse_tululu_category.py --start_page 300 --end_page 400
-
 ```
 Парсер скачает страницы с 300 по 400 включительно: создаст в каталоге с программой json файл с описанием книг и каталоги **images** для обложек в одинаковом формате, **books** для текстов книг соотвественно.
 
 ```
-
 python parse_tululu_category.py --end_page 4
-
 ```
 
-Парсер скачает страницы с 1 по 4 включительно: создаст в каталоге с программой json файл с описанием книг и каталоги **images** для обложек в одинаковом формате, **books** для текстов книг соотвественно.
+Будут скачены страницы с 1 по 4 включительно
 
 
 ### Особенности
