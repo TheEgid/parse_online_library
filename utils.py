@@ -39,15 +39,13 @@ def get_book_comments(soup):
 
 
 def get_book_genres(soup):
-    genres = []
     try:
-        [genres.append(genre.text) for genre in soup.select('span.d_book > a')]
-        return genres
+        return [genre.text for genre in soup.select('span.d_book > a')]
     except (TypeError, AttributeError):
         return
 
 
-def get_book_href(href_block, domain):
+def get_book_category_href(href_block, domain):
     try:
         href = href_block.select_one('a').get('href')
         book_href = urljoin(domain, href)
@@ -61,7 +59,7 @@ def get_category_hrefs(soup, domain):
     try:
         href_blocks = soup.select('table.d_book')
         for href_block in href_blocks:
-            category_hrefs.append(get_book_href(href_block, domain))
+            category_hrefs.append(get_book_category_href(href_block, domain))
         return category_hrefs
     except (TypeError, AttributeError):
         return

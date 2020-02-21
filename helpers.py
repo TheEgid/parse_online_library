@@ -36,10 +36,11 @@ def convert_to_jpg(file):
     return file
 
 
-def make_imageresize(file_path, extension='.jpg'):
-    gorizontal = [285, 200]
-    vertical = [200, 285]
-    quadrate = [gorizontal[0], gorizontal[0]]
+def make_imageresize(file_path, image_size, extension='.jpg'):
+    _width, _height = image_size
+    gorizontal = [_width, _height]
+    vertical = [_height, _width]
+    quadrate = [_width, _width]
     if get_file_extension(file_path) == extension:
 
         fd_img = open(file_path, 'rb')
