@@ -16,7 +16,7 @@ def download_img(url, filepath):
     response.raise_for_status()
     if 'image' not in response.headers['Content-Type']:
         logging.info(f'{url} image passed')
-        return
+        pass
     os.makedirs(folder, exist_ok=True)
 
     try:
@@ -26,6 +26,7 @@ def download_img(url, filepath):
         make_imageresize(file_path)
         logging.info(f'{url} downloaded & saved as {file_path}')
     except IOError:
+        logging.info(f'{url} file system error: image passed')
         pass
 
 
@@ -34,8 +35,8 @@ def download_txt(url, filepath):
     response = requests.get(url)
     response.raise_for_status()
     if 'text/plain' not in response.headers['Content-Type']:
-        logging.info(f'{url} txt passed')
-        return
+        logging.info(f'{url} text passed')
+        pass
     os.makedirs(folder, exist_ok=True)
 
     try:
@@ -43,15 +44,16 @@ def download_txt(url, filepath):
             f.write(response.content.decode("utf-8"))
             logging.info(f'{url} downloaded & saved as {filepath}')
     except IOError:
+        logging.info(f'{url} file system error: text passed')
         pass
 
 
 def fetch_hrefs(domain, category, start_page, end_page):
     if start_page >= end_page:
-        end_page = start_page+1
+        end_page = start_page + 1
     category_hrefs = []
     for page in range(start_page, end_page):
-        page_category_link = f"{domain}/{category}/{page}"
+        page_category_link = f'{domain}/{category}/{page}'
         category_hrefs.extend(
             get_category_hrefs(make_soup(page_category_link), domain))
     return category_hrefs
@@ -70,14 +72,14 @@ def parse_book(href, domain):
     book_specification["author"] = get_book_author(soup)
 
     image_url = urljoin(domain, get_book_img_src(soup))
-    img_filepath = os.path.join('images/', f'{filename}.jpg')
+    img_filepath = os.path.join(r'images/', f'{filename}.jpg')
 
     download_img(image_url, img_filepath)
     book_specification["img_src"] = img_filepath
 
-    txt_filepath = os.path.join('books/', f'{filename}.txt')
+    txt_filepath = os.path.join(r'books/', f'{filename}.txt')
     txt_id = ''.join(char for char in href if char.isdigit())
-    txt_url = urljoin(domain, f"txt.php?id={txt_id}")
+    txt_url = urljoin(domain, f'txt.php?id={txt_id}')
     download_txt(txt_url, txt_filepath)
     book_specification["book_path"] = txt_filepath
 
@@ -89,21 +91,21 @@ def parse_book(href, domain):
 
 
 def parse_library():
-    domain = r"http://tululu.org/"
-    category = 'l55'
+    logging.basicConfig(level=logging.INFO)
+    domain = r'http://tululu.org/'
+    category = r'l55'
     args = get_args_parser().parse_args()
     start_page = args.start_page
     end_page = args.end_page
     hrefs = fetch_hrefs(domain, category, start_page, end_page)
-
     parsed_books = [parse_book(href, domain) for href in hrefs if href]
-    info_books_file = "library.json"
-    with open(info_books_file, "w") as file:
-        json.dump(parsed_books, file, ensure_ascii=False, indent=4)
-        logging.info(f'{info_books_file=} downloaded & saved!')
+    
+    info_books_file = 'library.json'
+    with open(info_books_file, "w") as f:
+        json.dump(parsed_books, f, ensure_ascii=False, indent=4)
+        logging.info(f'{info_books_file=} books specification downloaded & saved!')
 
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+if __name__ == '__main__': 
     parse_library()
 
