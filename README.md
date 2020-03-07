@@ -23,7 +23,7 @@ python parse_tululu_category.py
 Можно также запускать с аргументами, кроме текста сообщения аргументы имеют параметры по умолчанию.
 
 ```
-usage: parse_tululu_category.py [-h] [-start_page START_PAGE] [-end_page END_PAGE]
+usage: parse_tululu_category.py [-h] [-start_page START_PAGE] [-end_page END_PAGE] [-dest_folder DEST_FOLDER] [-json_path JSON_PATH] [-skip_imgs] [-skip_txts]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -31,8 +31,15 @@ optional arguments:
                         First lib page for parsing (default: 1)
   -end_page END_PAGE, --end_page END_PAGE
                         Last lib page for parsing (default: 1)
+  -dest_folder DEST_FOLDER, --dest_folder DEST_FOLDER
+                        download destination folder (default: )
+  -json_path JSON_PATH, --json_path JSON_PATH
+                        final json results path (default: )
+  -skip_imgs, --skip_imgs
+                        skip images download (default: False)
+  -skip_txts, --skip_txts
+                        skip txt files download (default: False)
 ```
-
 
 ```
 python parse_tululu_category.py --start_page 300 --end_page 400
@@ -43,22 +50,27 @@ python parse_tululu_category.py --start_page 300 --end_page 400
 python parse_tululu_category.py --end_page 4
 ```
 
-Будут скачены страницы с 1 по 4 включительно
+Парсер скачает страницы с 1 по 4 включительно
+
+```
+python parse_tululu_category.py --skip_imgs --start_page 19 --end_page 21 --dest_folder MY_FOLDER --json_path MY_JSON_FOLDER 
+```
+Парсер скачает страницы с 19 по 21 включительно, но пропустит обложки, тексты сохранятся по пути MY_FOLDER, json файл с описанием книг сохранится по пути MY_JSON_FOLDER
 
 
 ### Особенности
 Программа выводит лог своей работы
 
 ```
-INFO:root:http://tululu.org/txt.php?id=18941 downloaded & saved as books/7-я книга_День Откровения.txt
-INFO:root: Process with G:\playground\parse_online_library\images/7-я книга_День Откровения.jpg
-INFO:root:http://tululu.org/images/nopic.gif downloaded & saved as G:\playground\parse_online_library\images/7-я книга_День Откровения.jpg
-INFO:root:process with href='http://tululu.org/b18941/' - 7-я книга_День Откровения
-INFO:root:http://tululu.org/txt.php?id=18942 downloaded & saved as books/8-я книга_Полет Уригленны.txt
-INFO:root: Process with G:\playground\parse_online_library\images/8-я книга_Полет Уригленны.jpg
-INFO:root:http://tululu.org/images/nopic.gif downloaded & saved as G:\playground\parse_online_library\images/8-я книга_Полет Уригленны.jpg
-INFO:root:process with href='http://tululu.org/b18942/' - 8-я книга_Полет Уригленны.
-INFO:root:info_books_file='library.json' books specification downloaded & saved!
+INFO:root:http://tululu.org/txt.php?id=19632 downloaded & saved as MY_FOLDER\books\Бартер.txt (text/plain; charset="utf-8")
+INFO:root: Process with G:\playground\parse_online_library\MY_FOLDER\images\Бартер.jpg
+INFO:root:http://tululu.org/images/nopic.gif downloaded & saved as MY_FOLDER\images\Бартер.jpg (image/gif)
+INFO:root:process with href='http://tululu.org/b19632/' - Бартер
+INFO:root:http://tululu.org/txt.php?id=19634 downloaded & saved as MY_FOLDER\books\Бархатный сезон.txt (text/plain; charset="utf-8")
+INFO:root: Process with G:\playground\parse_online_library\MY_FOLDER\images\Бархатный сезон.jpg
+INFO:root:http://tululu.org/images/nopic.gif downloaded & saved as MY_FOLDER\images\Бархатный сезон.jpg (image/gif)
+INFO:root:process with href='http://tululu.org/b19634/' - Бархатный сезон
+INFO:root:json_books_file='MY_JSON_FOLDER\\library.json' book specifications downloaded & saved!
 ```
 
 ### Цель проекта

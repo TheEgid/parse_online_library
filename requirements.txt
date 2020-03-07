@@ -1,4 +1,4 @@
-pathvalidate==2.1.0
+pathvalidate==2.2.0
 lxml==4.5.0
 beautifulsoup4==4.8.2
 Pillow==7.0.0

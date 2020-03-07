@@ -10,41 +10,33 @@ from utils import get_category_hrefs, get_book_title, get_book_author
 from utils import get_book_img_src, get_book_comments, get_book_genres
 
 
-def download_img(url, image_size, filepath):
-    folder, _ = filepath.split('/')
-    response = requests.get(url)
-    response.raise_for_status()
-    if 'image' not in response.headers['Content-Type']:
-        logging.info(f'{url} image passed')
-        pass
-    os.makedirs(folder, exist_ok=True)
-
+def download_file(url, filepath, image_size=None):
     try:
-        with open(filepath, 'wb') as f:
-            f.write(response.content)
-        file_path = convert_to_jpg(filepath)
-        make_imageresize(file_path, image_size)
-        logging.info(f'{url} downloaded & saved as {file_path}')
-    except IOError:
-        logging.info(f'{url} file system error: image passed')
+        folder, _ = os.path.split(filepath)
+        os.makedirs(folder, exist_ok=True)
+        response = requests.get(url)
+        response.raise_for_status()
+        content_type = response.headers['Content-Type']
+
+        if 'image' in content_type:
+            with open(filepath, 'wb') as f:
+                f.write(response.content)
+            file_path = convert_to_jpg(filepath)
+            make_imageresize(file_path, image_size)
+        elif 'text/plain' in content_type:
+            with open(filepath, 'w', encoding="utf-8") as f:
+                f.write(response.content.decode("utf-8"))
+        else:
+            raise ValueError
+
+        logging.info(f'{url} downloaded & saved as {filepath} ({content_type})')
+
+    except (requests.exceptions.HTTPError, ValueError):
+        logging.info(f'{url} passed')
         pass
 
-
-def download_txt(url, filepath):
-    folder, _ = filepath.split('/')
-    response = requests.get(url)
-    response.raise_for_status()
-    if 'text/plain' not in response.headers['Content-Type']:
-        logging.info(f'{url} text passed')
-        pass
-    os.makedirs(folder, exist_ok=True)
-
-    try:
-        with open(filepath, 'w', encoding="utf-8") as f:
-            f.write(response.content.decode("utf-8"))
-            logging.info(f'{url} downloaded & saved as {filepath}')
     except (IOError, UnicodeDecodeError):
-        logging.info(f'{url} file system error: text passed')
+        logging.info(f'{url} file system error: passed')
         pass
 
 
@@ -59,28 +51,32 @@ def fetch_hrefs(domain, category, start_page, end_page):
     return category_hrefs
 
 
-def parse_book(href, domain, image_size):
+def parse_book(href, domain, dest_folder, image_size, skip_txts, skip_imgs):
+    if dest_folder:
+        os.makedirs(dest_folder, exist_ok=True)
     book_specification = {}
     soup = make_soup(href)
     title = get_book_title(soup)
     if not title:
         return
 
-    filename = sanitize_filename(title)
-
     book_specification["title"] = title
     book_specification["author"] = get_book_author(soup)
 
-    txt_filepath = os.path.join(r'books/', f'{filename}.txt')
-    txt_id = ''.join(char for char in href if char.isdigit())
-    txt_url = urljoin(domain, f'txt.php?id={txt_id}')
-    download_txt(txt_url, txt_filepath)
-    book_specification["book_path"] = txt_filepath
+    filename = sanitize_filename(title)
 
-    image_url = urljoin(domain, get_book_img_src(soup))
-    img_filepath = os.path.join(r'images/', f'{filename}.jpg')
-    download_img(image_url, image_size, img_filepath)
-    book_specification["img_src"] = img_filepath
+    if not skip_txts:
+        txt_filepath = os.path.join(dest_folder, 'books', f'{filename}.txt')
+        txt_id = ''.join(char for char in href if char.isdigit())
+        txt_url = urljoin(domain, f'txt.php?id={txt_id}')
+        download_file(txt_url, txt_filepath)
+        book_specification["book_path"] = txt_filepath
+
+    if not skip_imgs:
+        image_url = urljoin(domain, get_book_img_src(soup))
+        img_filepath = os.path.join(dest_folder, 'images', f'{filename}.jpg')
+        download_file(image_url, img_filepath, image_size)
+        book_specification["img_src"] = img_filepath
 
     book_specification["comments"] = get_book_comments(soup)
     book_specification["genres"] = get_book_genres(soup)
@@ -91,20 +87,25 @@ def parse_book(href, domain, image_size):
 
 def parse_library():
     logging.basicConfig(level=logging.INFO)
-    domain = r'http://tululu.org/'
+    domain = 'http://tululu.org'
+    json_file = 'library.json'
     category = r'l55'
     image_size = [285, 200]
     args = get_args_parser().parse_args()
-    start_page = args.start_page
-    end_page = args.end_page
-    hrefs = fetch_hrefs(domain, category, start_page, end_page)
-    parsed_books = [parse_book(href, domain, image_size)
+
+    hrefs = fetch_hrefs(domain, category, args.start_page, args.end_page)
+    parsed_books = [parse_book(href, domain, args.dest_folder,
+                               image_size, args.skip_txts, args.skip_imgs,)
                     for href in hrefs if href]
 
-    info_books_file = 'library.json'
-    with open(info_books_file, "w") as f:
+    json_books_file = os.path.join(args.dest_folder, json_file)
+    if args.json_path:
+        os.makedirs(args.json_path, exist_ok=True)
+        json_books_file = os.path.join(args.json_path, json_file)
+
+    with open(json_books_file, "w") as f:
         json.dump(parsed_books, f, ensure_ascii=False, indent=4)
-        logging.info(f'{info_books_file=} book specifications downloaded & saved!')
+        logging.info(f'{json_books_file=} book specifications downloaded & saved!')
 
 
 if __name__ == '__main__':

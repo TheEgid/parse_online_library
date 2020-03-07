@@ -72,4 +72,12 @@ def get_args_parser():
                         help='First lib page for parsing')
     parser.add_argument('-end_page', '--end_page', type=int, default=1,
                         help='Last lib page for parsing')
+    parser.add_argument('-dest_folder', '--dest_folder',  type=str,
+                        default="", help='download destination folder')
+    parser.add_argument('-json_path', '--json_path',  type=str,
+                        default="", help='final json results path')
+    parser.add_argument('-skip_imgs', '--skip_imgs', action='store_true',
+                        default=False, help='skip images download')
+    parser.add_argument('-skip_txts', '--skip_txts', action='store_true',
+                        default=False, help='skip txt files download')
     return parser
