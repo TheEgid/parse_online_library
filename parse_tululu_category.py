@@ -51,7 +51,8 @@ def fetch_hrefs(domain, category, start_page, end_page):
     return category_hrefs
 
 
-def parse_book(href, domain, dest_folder, image_size, skip_txts, skip_imgs):
+def parse_book(href, dest_folder, image_size, skip_txts, skip_imgs):
+
     if dest_folder:
         os.makedirs(dest_folder, exist_ok=True)
     book_specification = {}
@@ -68,12 +69,12 @@ def parse_book(href, domain, dest_folder, image_size, skip_txts, skip_imgs):
     if not skip_txts:
         txt_filepath = os.path.join(dest_folder, 'books', f'{filename}.txt')
         txt_id = ''.join(char for char in href if char.isdigit())
-        txt_url = urljoin(domain, f'txt.php?id={txt_id}')
+        txt_url = urljoin(href, f'/txt.php?id={txt_id}')
         download_file(txt_url, txt_filepath)
         book_specification["book_path"] = txt_filepath
 
     if not skip_imgs:
-        image_url = urljoin(domain, get_book_img_src(soup))
+        image_url = urljoin(href, get_book_img_src(soup))
         img_filepath = os.path.join(dest_folder, 'images', f'{filename}.jpg')
         download_file(image_url, img_filepath, image_size)
         book_specification["img_src"] = img_filepath
@@ -94,8 +95,8 @@ def parse_library():
     args = get_args_parser().parse_args()
 
     hrefs = fetch_hrefs(domain, category, args.start_page, args.end_page)
-    parsed_books = [parse_book(href, domain, args.dest_folder,
-                               image_size, args.skip_txts, args.skip_imgs,)
+    parsed_books = [parse_book(href, args.dest_folder,
+                               image_size, args.skip_txts, args.skip_imgs)
                     for href in hrefs if href]
 
     json_books_file = os.path.join(args.dest_folder, json_file)
