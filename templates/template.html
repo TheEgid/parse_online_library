@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="../staticfiles/static/bootstrap.css">
+
+    <title>Online Library</title>
+
+</head>
+
+<body>
+
+<h1></h1>
+
+<div class="container">
+
+    <nav aria-label="pages_pagination">
+        <ul class="pagination">
+
+            {% if this_page == 1 %}
+                <li class="page-item disabled">
+                    <a class="page-link">Назад</a>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="index{{ this_page - 1 }}.html">Назад</a>
+                </li>
+            {% endif %}
+
+            {% for page_count in range(pages_amount) %}
+                {% if this_page == page_count + 1 %}
+                    {% set active = 'active' %}
+                {% endif %}
+                <li class="page-item {{ active }}">
+                    <a class="page-link" href="index{{ page_count + 1 }}.html">{{ page_count + 1 }}</a>
+                </li>
+            {% endfor %}
+
+            {% if this_page == pages_amount %}
+                <li class="page-item {{ disabled }}">
+                    <a class="page-link">Вперед</a>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="index{{ this_page + 1 }}.html">Вперед</a>
+                </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+</div>
+
+<div class="container">
+    <div class="row row-cols-2">
+
+        {% for book in books %}
+
+            <div class="col-6">
+                <div class="card mb-3" style="max-width: 540px;">
+                    <div class="row no-gutters"><div class="col-md-4"><img src="../{{ book.img_src }}" class="card-img" alt=" {{ book.title }} "></div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ book.title | replace("_", " ") }}</h5>
+                                <p class="card-text">{{ book.author | replace("_", " ")}}</p>
+                                {% for genre in book.genres %}
+                                    <span class="badge badge-secondary .badge-pill">{{ genre }}</span>
+                                {% endfor %}
+
+                                <p class="card-text">
+                                    <br>
+                                    <button type="button" class="btn btn-outline-light">
+                                        <a target="_blank" href="../{{ book.book_path }}">Читать!</a>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {%- if (loop.index % 2 == 0) %}
+                <div class="w-100"></div>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+
+</div>
+
+<script src="../staticfiles/static/jquery-3.js"></script>
+<script src="../staticfiles/static/popper.js"></script>
+<script src="../staticfiles/static/bootstrap.js"></script>
+</body>
+</html>
