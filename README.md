@@ -75,6 +75,26 @@ INFO:root:process with href='http://tululu.org/b19634/' - Бархатный с�
 INFO:root:json_books_file='MY_JSON_FOLDER\\library.json' book specifications downloaded & saved!
 ```
 
+### Создание страниц сайта с полученными книгами 
+
+Пример -
+
+https://theegid.github.io/parse_online_library/pages/index1.html
+
+Команда - 
+
+```
+python render_website.py
+```
+
+Лог создания страниц -
+
+```
+INFO:root:Create Page: pages/index1.html
+INFO:root:Create Page: pages/index2.html
+INFO:root:Create Page: pages/index3.html
+```
+
 ### Цель проекта
 
 Код написан в образовательных целях на онлайн-курсе для веб-разработчиков [dvmn.org](https://dvmn.org/).
