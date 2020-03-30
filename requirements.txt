@@ -1,7 +1,8 @@
-requests==2.22.0
-Jinja2==2.10.3
+requests==2.23.0
+Jinja2==2.11.1
 python_resize_image==1.1.19
 lxml==4.5.0
-pathvalidate==2.2.0
+pathvalidate==2.2.2
+configparser==5.0.0
 beautifulsoup4==4.8.2
 Pillow==7.0.0
