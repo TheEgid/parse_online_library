@@ -10,6 +10,14 @@ from utils import get_category_hrefs, get_book_title, get_book_author
 from utils import get_book_img_src, get_book_comments, get_book_genres
 
 
+def _sanitize_filename(filename):
+    filename = sanitize_filename(filename)
+    for sanitized_symbols in ['...', '..', '.']:
+        if filename.startswith(sanitized_symbols):
+            filename = filename.replace(sanitized_symbols, '')
+    return filename
+
+
 def download_file(url, filepath, image_size=None):
     try:
         folder, _ = os.path.split(filepath)
@@ -64,20 +72,20 @@ def parse_book(href, dest_folder, image_size, skip_txts, skip_imgs):
     book_specification["title"] = title
     book_specification["author"] = get_book_author(soup)
 
-    filename = sanitize_filename(title)
+    filename = _sanitize_filename(title)
 
     if not skip_txts:
         txt_filepath = os.path.join(dest_folder, 'books', f'{filename}.txt')
         txt_id = ''.join(char for char in href if char.isdigit())
         txt_url = urljoin(href, f'/txt.php?id={txt_id}')
         download_file(txt_url, txt_filepath)
-        book_specification["book_path"] = txt_filepath
+        book_specification["book_txt"] = f'{filename}.txt'
 
     if not skip_imgs:
         image_url = urljoin(href, get_book_img_src(soup))
         img_filepath = os.path.join(dest_folder, 'images', f'{filename}.jpg')
         download_file(image_url, img_filepath, image_size)
-        book_specification["img_src"] = img_filepath
+        book_specification["book_img"] = f'{filename}.jpg'
 
     book_specification["comments"] = get_book_comments(soup)
     book_specification["genres"] = get_book_genres(soup)

@@ -3,49 +3,35 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link rel="stylesheet" href="../staticfiles/static/bootstrap.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap.css">
 
     <title>Online Library</title>
 
 </head>
 
 <body>
-
 <h1></h1>
-
 <div class="container">
 
     <nav aria-label="pages_pagination">
         <ul class="pagination">
-
             {% if this_page == 1 %}
-                <li class="page-item disabled">
-                    <a class="page-link">Назад</a>
-                </li>
+                <li class="page-item disabled"><a class="page-link">Назад</a></li>
             {% else %}
-                <li class="page-item">
-                    <a class="page-link" href="index{{ this_page - 1 }}.html">Назад</a>
-                </li>
+                <li class="page-item"><a class="page-link" href="index{{ this_page - 1 }}.html">Назад</a></li>
             {% endif %}
 
             {% for page_count in range(pages_amount) %}
-                {% if this_page == page_count + 1 %}
-                    {% set active = 'active' %}
-                {% endif %}
+                {% set active = 'active' if this_page == page_count + 1 %}
                 <li class="page-item {{ active }}">
                     <a class="page-link" href="index{{ page_count + 1 }}.html">{{ page_count + 1 }}</a>
                 </li>
             {% endfor %}
 
             {% if this_page == pages_amount %}
-                <li class="page-item {{ disabled }}">
-                    <a class="page-link">Вперед</a>
-                </li>
+                <li class="page-item disabled"><a class="page-link">Вперед</a></li>
             {% else %}
-                <li class="page-item">
-                    <a class="page-link" href="index{{ this_page + 1 }}.html">Вперед</a>
-                </li>
+                <li class="page-item"><a class="page-link" href="index{{ this_page + 1 }}.html">Вперед</a></li>
             {% endif %}
 
         </ul>
@@ -59,7 +45,7 @@
 
             <div class="col-6">
                 <div class="card mb-3" style="max-width: 540px;">
-                    <div class="row no-gutters"><div class="col-md-4"><img src="../{{ book.img_src }}" class="card-img" alt=" {{ book.title }} "></div>
+                    <div class="row no-gutters"><div class="col-md-4"><img src="{{ BOOK_IMG_URL }}{{ book.book_img }}" class="card-img" alt=" {{ book.title }} "></div>
                         <div class="col-md-8">
                             <div class="card-body">
                                 <h5 class="card-title">{{ book.title | replace("_", " ") }}</h5>
@@ -71,7 +57,7 @@
                                 <p class="card-text">
                                     <br>
                                     <button type="button" class="btn btn-outline-light">
-                                        <a target="_blank" href="../{{ book.book_path }}">Читать!</a>
+                                        <a target="_blank" href="{{ BOOK_URL }}{{ book.book_txt }}">Читать!</a>
                                     </button>
                                 </p>
                             </div>
@@ -89,8 +75,8 @@
 
 </div>
 
-<script src="../staticfiles/static/jquery-3.js"></script>
-<script src="../staticfiles/static/popper.js"></script>
-<script src="../staticfiles/static/bootstrap.js"></script>
+<script src="{{ STATIC_URL }}jquery-3.js"></script>
+<script src="{{ STATIC_URL }}popper.js"></script>
+<script src="{{ STATIC_URL }}bootstrap.js"></script>
 </body>
 </html>
