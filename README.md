@@ -49,9 +49,9 @@ python parse_tululu_category.py --start_page 300 --end_page 400
 
 
 ```
-python parse_tululu_category.py --end_page 4
+python parse_tululu_category.py --end_page 15
 ```
-Парсер скачает страницы **с 1 по 4 включительно**.
+Парсер скачает страницы **с 1 по 15 включительно**.
 
 
 ```
