@@ -87,7 +87,7 @@ https://theegid.github.io/parse_online_library/pages/index1.html
 python render_website.py
 ```
 
-Аргументы настроек, дефолтные настраиваются через settings.ini в основном каталоге
+Аргументы настроек, дефолтные настраиваются через settings.ini в основном каталоге -
 ```
 usage: render_website.py [-h] 
                         [-template_folder TEMPLATE_FOLDER] 
