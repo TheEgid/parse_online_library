@@ -19,7 +19,7 @@ def is_book_exists(book_txt):
 
 
 def get_books_from_file(library_filepath):
-    with open(library_filepath) as json_file:
+    with open(library_filepath, encoding='utf8') as json_file:
         books = json.load(json_file)
     return [book for book in books if is_book_exists(book['book_txt'])]
 

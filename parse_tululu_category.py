@@ -15,7 +15,7 @@ def _sanitize_filename(filename):
     for sanitized_symbols in ['...', '..', '.']:
         if filename.startswith(sanitized_symbols):
             filename = filename.replace(sanitized_symbols, '')
-    return filename
+    return filename.replace(' ', '_')
 
 
 def download_file(url, filepath, image_size=None):
@@ -112,9 +112,9 @@ def parse_library():
         os.makedirs(args.json_path, exist_ok=True)
         json_books_file = os.path.join(args.json_path, json_file)
 
-    with open(json_books_file, "w") as f:
+    with open(json_books_file, "w", encoding='utf8') as f:
         json.dump(parsed_books, f, ensure_ascii=False, indent=4)
-        logging.info(f'{json_books_file=} book specifications downloaded & saved!')
+        logging.info(f'{json_books_file=} books specifications downloaded & saved!')
 
 
 if __name__ == '__main__':
