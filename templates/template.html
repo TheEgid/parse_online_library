@@ -20,20 +20,17 @@
             {% else %}
                 <li class="page-item"><a class="page-link" href="index{{ this_page - 1 }}.html">Назад</a></li>
             {% endif %}
-
             {% for page_count in range(pages_amount) %}
                 {% set active = 'active' if this_page == page_count + 1 %}
                 <li class="page-item {{ active }}">
                     <a class="page-link" href="index{{ page_count + 1 }}.html">{{ page_count + 1 }}</a>
                 </li>
             {% endfor %}
-
             {% if this_page == pages_amount %}
                 <li class="page-item disabled"><a class="page-link">Вперед</a></li>
             {% else %}
                 <li class="page-item"><a class="page-link" href="index{{ this_page + 1 }}.html">Вперед</a></li>
             {% endif %}
-
         </ul>
     </nav>
 </div>
@@ -42,7 +39,6 @@
     <div class="row row-cols-2">
 
         {% for book in books %}
-
             <div class="col-6">
                 <div class="card mb-3" style="max-width: 540px;">
                     <div class="row no-gutters"><div class="col-md-4"><img src="{{ BOOK_IMG_URL }}{{ book.book_img }}" class="card-img" alt="{{ book.title }}"></div>
@@ -69,7 +65,6 @@
             {%- if (loop.index % 2 == 0) %}
                 <div class="w-100"></div>
             {% endif %}
-
         {% endfor %}
     </div>
 
