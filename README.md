@@ -87,6 +87,15 @@ https://theegid.github.io/parse_online_library/pages/index1.html
 python render_website.py
 ```
 
+Аргументы настроек, дефолтные настраиваются через settings.ini в основном каталоге
+```
+usage: render_website.py [-h] 
+                        [-template_folder TEMPLATE_FOLDER] 
+                        [-template_file TEMPLATE_FILE] 
+                        [-library_filepath LIBRARY_FILEPATH] 
+                        [-pages_folder PAGES_FOLDER]          
+                        [-amount_on_page AMOUNT_ON_PAGE]
+```
 Лог создания страниц -
 
 ```
