@@ -62,8 +62,7 @@ def load_settings():
 
 def get_args_parser():
     settings = load_settings()
-    formatter_class = argparse.ArgumentDefaultsHelpFormatter
-    parser = argparse.ArgumentParser(formatter_class=formatter_class)
+    parser = argparse.ArgumentParser()
     parser.add_argument('-template_folder', '--template_folder', type=str,
                         default=settings["main_settings"]["TEMPLATE_FOLDER"])
     parser.add_argument('-template_file', '--template_file', type=str,
