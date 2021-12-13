@@ -1,7 +1,7 @@
 requests==2.25.1
 Jinja2==2.11.3
 python_resize_image==1.1.19
-lxml==4.6.3
+lxml==4.6.5
 pathvalidate==2.3.2
 configparser==5.0.1
 beautifulsoup4==4.9.3
