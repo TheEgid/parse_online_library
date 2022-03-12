@@ -5,5 +5,5 @@ lxml==4.6.5
 pathvalidate==2.3.2
 configparser==5.0.1
 beautifulsoup4==4.9.3
-Pillow==9.0.0
+Pillow==9.0.1
 more_itertools==8.6.0
